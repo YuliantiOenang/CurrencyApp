@@ -2,18 +2,25 @@ package com.example.currencyapp.ui
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.node.getOrAddAdapter
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.currencyapp.R
+import com.example.currencyapp.database.entity.Currency
 import com.example.currencyapp.databinding.ActivityMainBinding
 import com.example.currencyapp.repository.CurrencyExchangeRateRepository
 import com.example.currencyapp.repository.CurrencyRepository
 import com.example.currencyapp.ui.common.Loading
+import com.example.currencyapp.ui.common.OtherCurrencyAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -32,6 +39,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), MainContract.Vie
     @Inject
     lateinit var currencyExchangeRateRepository: CurrencyExchangeRateRepository
     lateinit var loading: Loading
+    val adapter= OtherCurrencyAdapter()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -39,25 +47,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), MainContract.Vie
 
         setContentView(binding.root)
         presenter.initializeData()
-        Observable.zip(currencyRepository.getCurrencyList(), currencyExchangeRateRepository.getExchangeRate())
-        {
-                currencyList, exchangeRate ->
-//            Log.d("YULI", "TEST AJA:${currencyList[0].name}")
-            //TODO: KENAPA BENTUK PAIR NYA GITU YA
-            Pair(
-                currencyList.map {("${it.code} - ${it.name}")},
-                exchangeRate
-            )
-        }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
-
-//        GlobalScope.launch{
-//
-//            Log.d("repository.call()","repository.call():"+repository.getCurrencyList())
-//        }
-
+        binding.rv.adapter = adapter
+        binding.rv.layoutManager = GridLayoutManager(this@MainActivity, 2)
 
 //        setSupportActionBar(binding.toolbar)
 //        binding.name.text = viewModel.name
@@ -71,6 +62,18 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), MainContract.Vie
 //            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                .setAction("Action", null).show()
 //        }
+
+
+        binding.button.setOnClickListener {
+            if (binding.spinner.selectedItem != null && binding.etNominal.text.isNotEmpty()) {
+                (binding.etNominal.text.toString()).toDoubleOrNull()?.let { it ->
+                    presenter.calculateOtherCurrency(
+                        binding.spinner.selectedItem.toString(),
+                        it
+                    )
+                }
+            }
+        }
     }
 
     override fun showLoading() {
@@ -94,7 +97,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), MainContract.Vie
     }
 
     override fun showAvailableCurrency(currencies: List<String>) {
-        Log.d("YULI", "showAvailableCurrency")
         val dataAdapter: ArrayAdapter<String> =
             ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, currencies)
 
@@ -106,6 +108,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), MainContract.Vie
     }
 
     override fun showCalculatedOtherCurrency(otherCurrencies: List<ExchangeRate>) {
-        TODO("Not yet implemented")
+        adapter.setData(otherCurrencies)
     }
 }

@@ -3,7 +3,7 @@ package com.example.currencyapp.ui
 interface MainContract {
     interface Presenter {
         fun initializeData()
-        fun calculateOtherCurrency(selectedCountry: String, amount: Long): Double
+        fun calculateOtherCurrency(selectedCountry: String, amount: Double)
         fun clearRequest()
     }
 

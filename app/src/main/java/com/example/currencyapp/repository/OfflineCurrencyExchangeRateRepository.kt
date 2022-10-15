@@ -41,6 +41,8 @@ class OfflineCurrencyExchangeRateRepository @Inject constructor(
     }
 
     override fun getExchangeRate(from: String, to: String): Observable<ExchangeRate> {
+        Log.d("YULI", "repository:getExchangeRate:"+from+","+to)
+        Log.d("YULI", "repository:getExchangeRate:getExchangeRate(from, to):"+dao.getExchangeRate(from, to))
         return dao.getExchangeRate(from, to)
     }
 

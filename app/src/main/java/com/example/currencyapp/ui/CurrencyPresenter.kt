@@ -1,6 +1,7 @@
 package com.example.currencyapp.ui
 
 import android.util.Log
+import android.widget.Toast
 import com.example.currencyapp.repository.CurrencyExchangeRateRepository
 import com.example.currencyapp.repository.CurrencyRepository
 import io.reactivex.Observable
@@ -19,13 +20,14 @@ class CurrencyPresenter @Inject constructor(
     @Named("observer") private val observerScheduler: Scheduler,
     private val disposables: CompositeDisposable
 ) : MainContract.Presenter {
+    var listCurrency = arrayListOf<ExchangeRate>()
     override fun initializeData() {
         view.showLoading()
         Observable.zip(currencyRepository.getCurrencyList(), currencyExchangeRateRepository.getExchangeRate())
         {
                 currencyList, exchangeRate ->
-            Log.d("YULI", "TEST AJA:${currencyList[0].name}")
             //TODO: KENAPA BENTUK PAIR NYA GITU YA
+            listCurrency = exchangeRate.map { ExchangeRate(it.to, it.rate) } as ArrayList<ExchangeRate>
             Pair(
                 currencyList.map {("${it.code} - ${it.name}")},
                 exchangeRate
@@ -49,25 +51,46 @@ class CurrencyPresenter @Inject constructor(
             }
     }
 
-    override fun calculateOtherCurrency(selectedCountry: String, amount: Long): Double {
+    override fun calculateOtherCurrency(selectedCountry: String, amount: Double) {
         view.showLoading()
-        currencyExchangeRateRepository.getExchangeRate("USD", selectedCountry)
+//        Log.d("YULI", "calculateOtherCurrency:selectedCountry:"+selectedCountry.subSequence(0,3) as String)
+//        Log.d("YULI", "calculateOtherCurrency:amount:"+amount)
+        currencyExchangeRateRepository.getExchangeRate("USD",
+            selectedCountry.subSequence(0,3) as String
+        )
+            .subscribeOn(subscriberScheduler)
+            .observeOn(observerScheduler)
             .map {
-                exchangeRate ->
-                return@map exchangeRate.rate*amount
+                exchangeRate -> amount/exchangeRate.rate
+                //Log.d("YULI", "exchangeRate:"+amount/exchangeRate.rate)
+            }
+            .zipWith(currencyExchangeRateRepository.getExchangeRate()) { usdAmount, otherCurrencies ->
+                // Then after getting all currency exchange rate, we calculate the usd amount to each currency exchange rate
+                // The result is represented in OtherCurrencyItem
+                // There's an improvement to show not only the result currency code but also the display name
+
+                return@zipWith otherCurrencies.map {
+                    val otherCurrencyAmount = usdAmount*it.rate
+//                    Log.d("YULI", "otherCurrencyAmount:"+otherCurrencyAmount)
+//                    Log.d("YULI", "usdAmount:"+usdAmount)
+//                    Log.d("YULI", "it.rate:"+it.rate)
+//                    Log.d("YULI", "it.to:"+it.to)
+                    return@map ExchangeRate(
+                        it.to,
+                        otherCurrencyAmount
+                    )
+                }
             }
             .subscribe(
                 {
                     view.hideLoading()
+                    view.showCalculatedOtherCurrency(it)
                 }, {
                     e ->
                     view.hideLoading()
                     view.showError(e.message)
-                }, {
-                    view.hideLoading()
                 }
             )
-        return 0.0
     }
 
     override fun clearRequest() {

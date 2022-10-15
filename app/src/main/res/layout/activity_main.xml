@@ -39,80 +39,38 @@
             android:textColor="@color/material_dynamic_neutral0"
             android:textColorHint="@color/black"
             android:inputType="textPersonName"
-            android:selectAllOnFocus="true"
-            android:text="@={viewModel.nominal}"/>
+            android:selectAllOnFocus="true" />
         <Spinner
             android:id="@+id/spinner"
             android:spinnerMode="dropdown" android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/grid_layout"
+            app:layout_constraintBottom_toTopOf="@+id/button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/et_nominal"
             android:text="@={viewModel.currency}">
         </Spinner>
-
-        <GridLayout
-            android:id="@+id/grid_layout"
-            android:layout_width="match_parent"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/spinner"
+            app:layout_constraintBottom_toTopOf="@+id/rv"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="submit"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_margin="10dp"
-            android:columnCount="3"
-            android:orientation="horizontal"
-            android:rowCount="3"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/spinner">
-
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_columnWeight="1"
-                android:gravity="center"
-                android:id="@+id/currency_lira1"
-                android:text="@={viewModel.currency1}"/>
-
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:gravity="center"
-                android:layout_columnWeight="1"
-                android:id="@+id/currency_lira2"
-                android:text="@={viewModel.currency2}"/>
-
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:gravity="center"
-                android:layout_columnWeight="1"
-                android:id="@+id/currency_lira3"
-                android:text="@={viewModel.currency3}"/>
-
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:gravity="center"
-                android:layout_columnWeight="1"
-                android:id="@+id/currency_lira4"
-                android:text="@={viewModel.currency4}"/>
-
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:gravity="center"
-                android:id="@+id/currency_lira5"
-                android:layout_columnWeight="1"
-                android:text="@={viewModel.currency5}"/>
-
-            <TextView
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:gravity="center"
-                android:layout_columnWeight="1"
-                android:id="@+id/currency_lira6"
-                android:text="@={viewModel.currency6}"/>
-        </GridLayout>
+            app:layout_constraintTop_toBottomOf="@+id/button">
+        </androidx.recyclerview.widget.RecyclerView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
