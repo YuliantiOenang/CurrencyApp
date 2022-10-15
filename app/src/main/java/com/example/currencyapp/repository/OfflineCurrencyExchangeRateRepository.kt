@@ -1,5 +1,6 @@
 package com.example.currencyapp.repository
 
+import android.util.Log
 import com.example.currencyapp.database.dao.ExchangeRateDao
 import com.example.currencyapp.database.entity.ExchangeRate
 import com.example.currencyapp.network.CurrencyNetworkDataSource
@@ -18,7 +19,8 @@ class OfflineCurrencyExchangeRateRepository @Inject constructor(
     override fun getExchangeRate(): Observable<List<ExchangeRate>> {
         val minutes = TimeUnit.MILLISECONDS.toMinutes(1800000)
         val currentTime = System.currentTimeMillis()
-        if (currencyExchangeLocalDataStore.readLong(LAST_FETCH_EXCHANGE_RATE_TIMESTAMP) + minutes > currentTime) {
+        val timeSaved = currencyExchangeLocalDataStore.readLong(LAST_FETCH_EXCHANGE_RATE_TIMESTAMP)
+        if ((timeSaved < 0.5) || (currencyExchangeLocalDataStore.readLong(LAST_FETCH_EXCHANGE_RATE_TIMESTAMP) + minutes > currentTime)) {
             return networkDataSource.getConvertRate().map {
                 return@map it.rates.map { entry ->
                     ExchangeRate(it.base, entry.key, entry.value)
@@ -33,6 +35,7 @@ class OfflineCurrencyExchangeRateRepository @Inject constructor(
                     return@map exchangeCurrency
                 }
         } else {
+            Log.d("YULI", "MASUK SINI: getExchangeRate DAO")
             return dao.getAllObservable()
         }
     }

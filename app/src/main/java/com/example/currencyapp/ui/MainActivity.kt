@@ -13,6 +13,7 @@ import com.example.currencyapp.R
 import com.example.currencyapp.databinding.ActivityMainBinding
 import com.example.currencyapp.repository.CurrencyExchangeRateRepository
 import com.example.currencyapp.repository.CurrencyRepository
+import com.example.currencyapp.ui.common.Loading
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -26,11 +27,31 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), MainContract.Vie
 //    @Inject lateinit var mainFragmentFactory: MainFragmentFactory
     @Inject
     lateinit var presenter: MainContract.Presenter
+    @Inject
+    lateinit var currencyRepository: CurrencyRepository
+    @Inject
+    lateinit var currencyExchangeRateRepository: CurrencyExchangeRateRepository
+    lateinit var loading: Loading
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter.initializeData()
         binding = ActivityMainBinding.inflate(layoutInflater)
+        loading = Loading(this@MainActivity)
+
         setContentView(binding.root)
+        presenter.initializeData()
+        Observable.zip(currencyRepository.getCurrencyList(), currencyExchangeRateRepository.getExchangeRate())
+        {
+                currencyList, exchangeRate ->
+//            Log.d("YULI", "TEST AJA:${currencyList[0].name}")
+            //TODO: KENAPA BENTUK PAIR NYA GITU YA
+            Pair(
+                currencyList.map {("${it.code} - ${it.name}")},
+                exchangeRate
+            )
+        }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
 
 //        GlobalScope.launch{
 //
@@ -53,22 +74,27 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), MainContract.Vie
     }
 
     override fun showLoading() {
-        TODO("Not yet implemented")
+        Log.d("YULI", "showLoading")
+        loading.show()
     }
 
     override fun hideLoading() {
-        TODO("Not yet implemented")
+        Log.d("YULI", "hideLoading")
+        loading.hide()
     }
 
     override fun showRetry() {
+        Log.d("YULI", "showRetry")
         TODO("Not yet implemented")
     }
 
     override fun showError(error: String?) {
+        Log.d("YULI", "showError:"+error)
         Toast.makeText(this, error, Toast.LENGTH_LONG).show()
     }
 
     override fun showAvailableCurrency(currencies: List<String>) {
+        Log.d("YULI", "showAvailableCurrency")
         val dataAdapter: ArrayAdapter<String> =
             ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, currencies)
 

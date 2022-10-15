@@ -17,7 +17,8 @@ class OfflineCurrencyRepository @Inject constructor(
     override fun getCurrencyList(): Observable<List<Currency>> {
         val minutes = TimeUnit.MILLISECONDS.toMinutes(1800000)
         val currentTime = System.currentTimeMillis()
-        if (currencyExchangeLocalDataStore.readLong(LocalDataStoreConstant.LAST_FETCH_CURRENCY_TIMESTAMP) + minutes > currentTime) {
+        val timeSaved = currencyExchangeLocalDataStore.readLong(LocalDataStoreConstant.LAST_FETCH_CURRENCY_TIMESTAMP)
+        if ((timeSaved < 0.5) || (timeSaved + minutes > currentTime)) {
             return networkDataSource.getAllCurrencyList()
                 .map { jsonObject ->
                     return@map jsonObject.keySet().map { key ->
