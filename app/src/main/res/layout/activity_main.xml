@@ -18,7 +18,102 @@
 <!--            android:background="?attr/colorPrimary" />-->
 
     </com.google.android.material.appbar.AppBarLayout>
-        <include layout="@layout/content_main" />
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        tools:context=".ui.MainFragment">
+
+        <EditText
+            android:id="@+id/et_nominal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/spinner"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:autofillHints="angka"
+            android:hint="masukkan angka"
+            android:textSize="12dp"
+            android:textColor="@color/material_dynamic_neutral0"
+            android:textColorHint="@color/black"
+            android:inputType="textPersonName"
+            android:selectAllOnFocus="true"
+            android:text="@={viewModel.nominal}"/>
+        <Spinner
+            android:id="@+id/spinner"
+            android:spinnerMode="dropdown" android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/grid_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_nominal"
+            android:text="@={viewModel.currency}">
+        </Spinner>
+
+        <GridLayout
+            android:id="@+id/grid_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:columnCount="3"
+            android:orientation="horizontal"
+            android:rowCount="3"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/spinner">
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:id="@+id/currency_lira1"
+                android:text="@={viewModel.currency1}"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:gravity="center"
+                android:layout_columnWeight="1"
+                android:id="@+id/currency_lira2"
+                android:text="@={viewModel.currency2}"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:gravity="center"
+                android:layout_columnWeight="1"
+                android:id="@+id/currency_lira3"
+                android:text="@={viewModel.currency3}"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:gravity="center"
+                android:layout_columnWeight="1"
+                android:id="@+id/currency_lira4"
+                android:text="@={viewModel.currency4}"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:gravity="center"
+                android:id="@+id/currency_lira5"
+                android:layout_columnWeight="1"
+                android:text="@={viewModel.currency5}"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:gravity="center"
+                android:layout_columnWeight="1"
+                android:id="@+id/currency_lira6"
+                android:text="@={viewModel.currency6}"/>
+        </GridLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
