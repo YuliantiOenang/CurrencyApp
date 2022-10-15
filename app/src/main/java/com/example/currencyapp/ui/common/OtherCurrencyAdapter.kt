@@ -32,7 +32,8 @@ class OtherCurrencyAdapter : RecyclerView.Adapter<OtherCurrencyAdapter.OtherCurr
     }
 
     override fun onBindViewHolder(holder: OtherCurrencyViewHolder, position: Int) {
-        holder.textViewAmountConverted.text = data[position].rate.toString()
+        val formated = String.format("%.2f", data[position].rate)
+        holder.textViewAmountConverted.text = formated
         holder.textViewCurrency.text = data[position].name
     }
 
