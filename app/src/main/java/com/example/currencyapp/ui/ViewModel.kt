@@ -20,11 +20,11 @@ class ViewModel @Inject constructor(
 ) : androidx.lifecycle.ViewModel() {
     var exchangeRateData: MutableLiveData<List<ExchangeRate>> = MutableLiveData<List<ExchangeRate>>()
     var currencyAvailableData : MutableLiveData<List<String>> = MutableLiveData<List<String>>()
-
-//    var data = arrayListOf<Pair<String, List<ExchangeRate>>>()
-//    var dataString= MutableLiveData<List<String>>(mutableListOf())
+    var isRefreshing: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    var error: MutableLiveData<String> = MutableLiveData<String>()
 //
     fun initializeData() {
+        isRefreshing.postValue(true)
         Observable.zip(currencyRepository.getCurrencyList(), currencyExchangeRateRepository.getExchangeRate())
         {
                 currencyList, exchangeRate ->
@@ -33,16 +33,17 @@ class ViewModel @Inject constructor(
                 exchangeRate
            ).let {
                currencyAvailableData.postValue(it.first!!)
+               isRefreshing.postValue(false)
            }
         }
 
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
+            .subscribeOn(subscriberScheduler)
+            .observeOn(observerScheduler)
+            .subscribe({}, {e-> error.postValue(e.message)})
     }
 
     fun calculateOtherCurrency(selectedCountry: String, amount: Double) {
-//        view.showLoading()
+        isRefreshing.postValue(true)
         currencyExchangeRateRepository.getExchangeRate("USD",
             selectedCountry.subSequence(0,3) as String
         )
@@ -65,13 +66,12 @@ class ViewModel @Inject constructor(
             }
             .subscribe(
                 {
-//                    view.hideLoading()
-//                    view.showCalculatedOtherCurrency(it)
+                    isRefreshing.postValue(false)
                     exchangeRateData.postValue(it)
                 }, {
                         e ->
-//                    view.hideLoading()
-//                    view.showError(e.message)
+                    isRefreshing.postValue(false)
+                    error.postValue(e.message)
                 }
             )
     }
