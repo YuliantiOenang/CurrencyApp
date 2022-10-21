@@ -84,7 +84,6 @@ class CurrencyPresenter @Inject constructor(
             .subscribe(
                 {
                     view.hideLoading()
-                    view.showCalculatedOtherCurrency(it)
                 }, {
                     e ->
                     view.hideLoading()

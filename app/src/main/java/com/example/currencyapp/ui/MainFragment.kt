@@ -77,8 +77,4 @@ class MainFragment : Fragment(), MainContract.View {
     override fun showError(error: String?) {
         Toast.makeText(context, error, Toast.LENGTH_LONG).show()
     }
-
-    override fun showCalculatedOtherCurrency(otherCurrencies: List<ExchangeRate>) {
-        TODO("Not yet implemented")
-    }
 }

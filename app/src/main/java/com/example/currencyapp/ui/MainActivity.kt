@@ -81,6 +81,14 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), MainContract.Vie
 
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
         viewModel.currencyAvailableData.observe(this, nameObserver)
+
+        // Create the observer which updates the UI.
+        val exchangeRateObserver = Observer<List<ExchangeRate>> { newName ->
+            // Update the UI, in this case, a TextView.
+            //binding.txtCoba.text = newName.toString()
+            adapter.setData(newName)
+        }
+        viewModel.exchangeRateData.observe(this, exchangeRateObserver)
     }
 
     override fun showLoading() {
@@ -97,9 +105,5 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), MainContract.Vie
 
     override fun showError(error: String?) {
         Toast.makeText(this, error, Toast.LENGTH_LONG).show()
-    }
-
-    override fun showCalculatedOtherCurrency(otherCurrencies: List<ExchangeRate>) {
-        adapter.setData(otherCurrencies)
     }
 }

@@ -18,9 +18,7 @@ class ViewModel @Inject constructor(
     @Named("subscriber") private val subscriberScheduler: Scheduler,
     @Named("observer") private val observerScheduler: Scheduler
 ) : androidx.lifecycle.ViewModel() {
-    val exchangeRateData: MutableLiveData<Pair<String, List<ExchangeRate>>> by lazy {
-        MutableLiveData<Pair<String, List<ExchangeRate>>>()
-    }
+    var exchangeRateData: MutableLiveData<List<ExchangeRate>> = MutableLiveData<List<ExchangeRate>>()
     var currencyAvailableData : MutableLiveData<List<String>> = MutableLiveData<List<String>>()
 
 //    var data = arrayListOf<Pair<String, List<ExchangeRate>>>()
@@ -57,8 +55,7 @@ class ViewModel @Inject constructor(
                 // Then after getting all currency exchange rate, we calculate the usd amount to each currency exchange rate
                 // The result is represented in OtherCurrencyItem
                 // There's an improvement to show not only the result currency code but also the display name
-
-                return@zipWith otherCurrencies.map {
+                return@zipWith otherCurrencies.map { it ->
                     val otherCurrencyAmount = usdAmount*it.rate
                     return@map ExchangeRate(
                         it.to,
@@ -70,6 +67,7 @@ class ViewModel @Inject constructor(
                 {
 //                    view.hideLoading()
 //                    view.showCalculatedOtherCurrency(it)
+                    exchangeRateData.postValue(it)
                 }, {
                         e ->
 //                    view.hideLoading()
