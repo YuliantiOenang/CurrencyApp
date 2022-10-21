@@ -40,7 +40,7 @@ class CurrencyPresenter @Inject constructor(
                 if (it.first.isEmpty() || it.second.isEmpty()) {
                     //view.showRetryDialog()
                 } else {
-                    view.showAvailableCurrency(it.first)
+                    //view.showAvailableCurrency(it.first)
                 }
             }, {
                 e ->

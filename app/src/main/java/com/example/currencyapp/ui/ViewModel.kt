@@ -1,92 +1,84 @@
 package com.example.currencyapp.ui
 
-import androidx.databinding.BaseObservable
-import androidx.databinding.Bindable
-import androidx.databinding.ObservableField
-import androidx.databinding.ObservableInt
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.currencyapp.repository.CurrencyExchangeRateRepository
 import com.example.currencyapp.repository.CurrencyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable
+import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
+import javax.inject.Named
 
-//@HiltViewModel
-class ViewModel : androidx.lifecycle.ViewModel() {
-//    @Inject
-//    lateinit var currencyRepository: CurrencyRepository
-//
-//    @Inject
-//    lateinit var currencyExchangeRateRepository: CurrencyExchangeRateRepository
-//
+@HiltViewModel
+class ViewModel @Inject constructor(
+    var currencyRepository: CurrencyRepository,
+    var currencyExchangeRateRepository: CurrencyExchangeRateRepository,
+    @Named("subscriber") private val subscriberScheduler: Scheduler,
+    @Named("observer") private val observerScheduler: Scheduler
+) : androidx.lifecycle.ViewModel() {
+    val exchangeRateData: MutableLiveData<Pair<String, List<ExchangeRate>>> by lazy {
+        MutableLiveData<Pair<String, List<ExchangeRate>>>()
+    }
+    var currencyAvailableData : MutableLiveData<List<String>> = MutableLiveData<List<String>>()
+
 //    var data = arrayListOf<Pair<String, List<ExchangeRate>>>()
 //    var dataString= MutableLiveData<List<String>>(mutableListOf())
 //
-//    fun initializeData() {
-//        Observable.zip(currencyRepository.getCurrencyList(), currencyExchangeRateRepository.getExchangeRate())
-//        {
-//                currencyList, exchangeRate ->
-//            //TODO: KENAPA BENTUK PAIR NYA GITU YA
-//           Pair(
-//                currencyList.map {("${it.code} - ${it.name}")},
-//                exchangeRate
-//           )
-//            dataString.value = listOf(exchangeRate.toString())
-//        }
-//
-//            .subscribeOn(Schedulers.io())
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .subscribe()
-//    }
+    fun initializeData() {
+        Observable.zip(currencyRepository.getCurrencyList(), currencyExchangeRateRepository.getExchangeRate())
+        {
+                currencyList, exchangeRate ->
+           Pair(
+                currencyList.map {("${it.code} - ${it.name}")},
+                exchangeRate
+           ).let {
+               currencyAvailableData.postValue(it.first!!)
+           }
+        }
 
-//    private var userMutableLiveData: MutableLiveData<Currency>? = null
-//
-//    fun getUser(): LiveData<User?>? {
-//        if (userMutableLiveData == null) {
-//            userMutableLiveData = MutableLiveData<Any>()
-//        }
-//        return userMutableLiveData
-//    }
-//
-//    @Bindable
-//    fun getNominal(): Int {
-//        return this.nominal
-//    }
-//
-//    fun setNominal(nominal: Int) {
-//        this.nominal = nominal
-//        notifyPropertyChanged()
-//    }
-//
-//    @Bindable
-//    fun getPassword(): String {
-//        return this.password
-//    }
-//
-//    fun setPassword(password: String) {
-//        password = password
-//        notifyPropertyChanged(BR.password)
-//    }
-//
-//    fun onLoginClicked() {
-//        setBusy(0) //View.VISIBLE
-//        Handler().postDelayed(Runnable {
-//            val user = ViewModel(getEmail(), getPassword())
-//            if (!user.isEmailValid()) {
-//                errorEmail.set("Enter a valid email address")
-//            } else {
-//                errorEmail.set(null)
-//            }
-//            if (!user.isPasswordLengthGreaterThan5()) errorPassword.set("Password Length should be greater than 5") else {
-//                errorPassword.set(null)
-//            }
-//            userMutableLiveData!!.setValue(user)
-//            setBusy(8) //8 == View.GONE
-//        }, 5000)
-//    }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+    }
 
+    fun calculateOtherCurrency(selectedCountry: String, amount: Double) {
+//        view.showLoading()
+        currencyExchangeRateRepository.getExchangeRate("USD",
+            selectedCountry.subSequence(0,3) as String
+        )
+            .subscribeOn(subscriberScheduler)
+            .observeOn(observerScheduler)
+            .map {
+                    exchangeRate -> amount/exchangeRate.rate
+            }
+            .zipWith(currencyExchangeRateRepository.getExchangeRate()) { usdAmount, otherCurrencies ->
+                // Then after getting all currency exchange rate, we calculate the usd amount to each currency exchange rate
+                // The result is represented in OtherCurrencyItem
+                // There's an improvement to show not only the result currency code but also the display name
 
+                return@zipWith otherCurrencies.map {
+                    val otherCurrencyAmount = usdAmount*it.rate
+                    return@map ExchangeRate(
+                        it.to,
+                        otherCurrencyAmount
+                    )
+                }
+            }
+            .subscribe(
+                {
+//                    view.hideLoading()
+//                    view.showCalculatedOtherCurrency(it)
+                }, {
+                        e ->
+//                    view.hideLoading()
+//                    view.showError(e.message)
+                }
+            )
+    }
+
+    fun clearRequest() {
+        TODO("Not yet implemented")
+    }
 }

@@ -12,7 +12,6 @@ interface MainContract {
         fun hideLoading()
         fun showRetry()
         fun showError(error: String?)
-        fun showAvailableCurrency(currencies: List<String>)
         fun showCalculatedOtherCurrency(otherCurrencies: List<ExchangeRate>)
     }
 }

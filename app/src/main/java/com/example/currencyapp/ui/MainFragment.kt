@@ -78,17 +78,6 @@ class MainFragment : Fragment(), MainContract.View {
         Toast.makeText(context, error, Toast.LENGTH_LONG).show()
     }
 
-    override fun showAvailableCurrency(currencies: List<String>) {
-        val dataAdapter: ArrayAdapter<String> =
-            ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, currencies)
-
-
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-
-        binding.spinner.setAdapter(dataAdapter)
-    }
-
     override fun showCalculatedOtherCurrency(otherCurrencies: List<ExchangeRate>) {
         TODO("Not yet implemented")
     }

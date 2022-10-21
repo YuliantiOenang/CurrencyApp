@@ -30,8 +30,8 @@ interface MainModule {
 }
 
 @Module
-@InstallIn(ActivityComponent::class)
-object MainProviderModule {
+@InstallIn(SingletonComponent::class)
+object MainModelModule {
     @Provides
     @Named("subscriber")
     fun provideSubscriberScheduler(): Scheduler = Schedulers.io()
@@ -41,9 +41,14 @@ object MainProviderModule {
     fun provideObserverScheduler(): Scheduler = AndroidSchedulers.mainThread()
 
     @Provides
+    fun provideCompositeDisposable(): CompositeDisposable = CompositeDisposable()
+}
+
+@Module
+@InstallIn(ActivityComponent::class)
+object MainProviderModule {
+    @Provides
     fun provideActivity(activity: Activity): MainActivity {
         return activity as MainActivity
     }
-    @Provides
-    fun provideCompositeDisposable(): CompositeDisposable = CompositeDisposable()
 }
