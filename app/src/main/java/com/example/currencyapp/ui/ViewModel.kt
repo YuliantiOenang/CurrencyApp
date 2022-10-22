@@ -7,6 +7,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 import javax.inject.Named
@@ -16,13 +18,14 @@ class ViewModel @Inject constructor(
     var currencyRepository: CurrencyRepository,
     var currencyExchangeRateRepository: CurrencyExchangeRateRepository,
     @Named("subscriber") private val subscriberScheduler: Scheduler,
-    @Named("observer") private val observerScheduler: Scheduler
+    @Named("observer") private val observerScheduler: Scheduler,
+    private var disposable: CompositeDisposable
 ) : androidx.lifecycle.ViewModel() {
     var exchangeRateData: MutableLiveData<List<ExchangeRate>> = MutableLiveData<List<ExchangeRate>>()
     var currencyAvailableData : MutableLiveData<List<String>> = MutableLiveData<List<String>>()
     var isRefreshing: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     var error: MutableLiveData<String> = MutableLiveData<String>()
-//
+
     fun initializeData() {
         isRefreshing.postValue(true)
         Observable.zip(currencyRepository.getCurrencyList(), currencyExchangeRateRepository.getExchangeRate())
@@ -33,13 +36,18 @@ class ViewModel @Inject constructor(
                 exchangeRate
            ).let {
                currencyAvailableData.postValue(it.first!!)
-               isRefreshing.postValue(false)
            }
         }
 
             .subscribeOn(subscriberScheduler)
             .observeOn(observerScheduler)
-            .subscribe({}, {e-> error.postValue(e.message)})
+            .subscribe({}, {
+                    e-> error.postValue(e.message)
+            })
+            .let {
+                disposable.add(it)
+                isRefreshing.postValue(false)
+            }
     }
 
     fun calculateOtherCurrency(selectedCountry: String, amount: Double) {
@@ -73,10 +81,12 @@ class ViewModel @Inject constructor(
                     isRefreshing.postValue(false)
                     error.postValue(e.message)
                 }
-            )
+            ).let {
+                disposable.add(it)
+            }
     }
 
     fun clearRequest() {
-        TODO("Not yet implemented")
+        disposable.dispose()
     }
 }

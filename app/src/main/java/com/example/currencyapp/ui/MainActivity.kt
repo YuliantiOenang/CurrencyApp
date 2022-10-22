@@ -72,4 +72,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         }
         viewModel.error.observe(this, error)
     }
+
+    override fun onDestroy() {
+        viewModel.clearRequest()
+        super.onDestroy()
+    }
 }
