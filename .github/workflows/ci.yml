@@ -24,7 +24,12 @@ jobs:
         run: chmod +x gradlew
       - name: Build with Gradle
         run: ./gradlew build
-      - name: Upload a Build Artifact
+      - name: Upload build reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-reports
+          path: build/reports/
+      - name: Download a Build Artifact
         uses: actions/download-artifact@v3
         id: download
         with:
