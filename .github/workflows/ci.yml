@@ -28,8 +28,8 @@ jobs:
         uses: actions/download-artifact@v3
         id: download
         with:
-          name: 'my-artifact'
-          path: 'etc/usr/artifacts/'
+          name: 'app-debug.apk'
+          path: '/app/build/output/apk/debug/'
 
       - name: 'Echo download path'
         run: echo ${{steps.download.outputs.download-path}}
