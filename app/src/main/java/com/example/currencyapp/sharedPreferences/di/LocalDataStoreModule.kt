@@ -9,7 +9,7 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface LocalDataStoreModule {
+interface DLocalDataStoreModule {
     @Binds
     fun bindCurrencyExchangeLocalDataStore(sharedPreferenceLocalDataStore: SharedPreferenceLocalDataStore): CurrencyExchangeLocalDataStore
 }
