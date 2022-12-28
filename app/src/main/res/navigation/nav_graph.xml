@@ -6,7 +6,7 @@
     app:startDestination="@id/FirstFragment">
     <fragment
         android:id="@+id/FirstFragment"
-        android:name="com.example.currencyapp.ui.MainFragment"
+        android:name="com.androidbestapplication.currencyapp.ui.MainFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/fragment_first">
 

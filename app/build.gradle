@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace 'com.example.currencyapp'
+    namespace 'com.androidbestapplication.currencyapp'
     compileSdk 32
     buildFeatures {
         viewBinding true
@@ -16,7 +16,7 @@ android {
 
 
     defaultConfig {
-        applicationId "com.example.currencyapp"
+        applicationId "com.androidbestapplication.currencyapp"
         minSdk 21
         targetSdk 32
         versionCode 1
