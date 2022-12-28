@@ -32,7 +32,7 @@ jobs:
         uses: asadmansr/android-test-report-action@v1.2.0
         if: ${{ always() }} # IMPORTANT: run Android Test Report regardless
       - name: Upload APK
-          uses: actions/upload-artifact@v3
-          with:
-            name: build-APK
-            path: app/build/outputs/apk/
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-APK
+          path: app/build/outputs/apk/
