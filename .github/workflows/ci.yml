@@ -39,5 +39,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-        echo "${{ secrets. RELEASE KEYSTORE }}" > release.keystore.asc
-        gpg -d --passphrase "${f secrets. RELEASE_KEYSTORE_PASSPHRASE }}" --batch release.keystore.asc > app/ release. keystore
+          echo "${{ secrets. RELEASE KEYSTORE }}" > release.keystore.asc
+          gpg -d --passphrase "${f secrets. RELEASE_KEYSTORE_PASSPHRASE }}" --batch release.keystore.asc > app/ release. keystore
