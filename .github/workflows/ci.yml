@@ -10,9 +10,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        subdir: [ sub1, sub2 ]
 
     steps:
       - uses: actions/checkout@v3
