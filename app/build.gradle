@@ -13,8 +13,6 @@ android {
         dataBinding=true
     }
 
-
-
     defaultConfig {
         applicationId "com.androidbestapplication.currencyapp"
         minSdk 21
@@ -25,10 +23,22 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        release {
+            // You need to specify either an absolute path or include the
+            // keystore file in the same directory as the build.gradle file.
+            storeFile file("currency.jks")
+            storePassword "yulianti"
+            keyAlias "currencyalias"
+            keyPassword "yulianti"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {

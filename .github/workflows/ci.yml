@@ -33,3 +33,9 @@ jobs:
         with:
           name: build-APK
           path: app/build/outputs/apk/
+
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v18
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+          - run: nix-build
