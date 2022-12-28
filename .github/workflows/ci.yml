@@ -28,7 +28,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-reports
-          path: build/reports/
+          path: app/build/reports/
       - name: Download a Build Artifact
         uses: actions/download-artifact@v3
         id: download
