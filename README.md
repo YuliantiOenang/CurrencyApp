@@ -1,7 +1,7 @@
 # CurrencyApp
 
 ## Diagram
-![CurrencyApplication](https://user-images.githubusercontent.com/3623363/209784291-8d405bed-d47e-4768-9a3b-546191efeeba.png)
+![CurrencyApplication drawio](https://user-images.githubusercontent.com/3623363/209786539-6671ede9-77fb-41b7-a9ba-ed3019e89a4e.png)
 
 ## Features
 Application for convert currency. The system will save the data from the cloud to local db and update it every 30 minutes when the user request it
