@@ -33,3 +33,11 @@ jobs:
         with:
           name: build-APK
           path: app/build/outputs/apk/
+  assembleRelease:
+    name: restoreReleaseKeystore
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+        echo "${{ secrets. RELEASE KEYSTORE }}" > release.keystore.asc
+        gpg -d --passphrase "${f secrets. RELEASE_KEYSTORE_PASSPHRASE }}" --batch release.keystore.asc > app/ release. keystore
