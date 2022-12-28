@@ -35,7 +35,7 @@ class SharedPreferenceLocalDataStore @Inject constructor(context: Application): 
     }
 
     override fun clear() {
-        TODO("Not yet implemented")
+        sharedPreferences.edit().clear().apply()
     }
 
 }
