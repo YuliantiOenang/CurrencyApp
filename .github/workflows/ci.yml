@@ -29,12 +29,8 @@ jobs:
         with:
           name: build-reports
           path: app/build/reports/
-      - name: Download a Build Artifact
-        uses: actions/download-artifact@v3
-        id: download
-        with:
-          name: 'app-debug.apk'
-          path: '/app/build/output/apk/debug/'
-
-      - name: 'Echo download path'
-        run: echo ${{steps.download.outputs.download-path}}
+      - name: Upload APK
+          uses: actions/upload-artifact@v3
+          with:
+            name: build-APK
+            path: app/build/outputs/apk/
