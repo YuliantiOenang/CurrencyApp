@@ -12,10 +12,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - run: |
-          echo "${{ secrets.RELEASE_KEYSTORE }}" > currency.jks.asc
-          gpg -d --passphrase "${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}" --batch currency.jks.asc > /home/runner/work/CurrencyApp/CurrencyApp/app/currency.jks
       - uses: actions/checkout@v3
       - name: set up JDK 11
         uses: actions/setup-java@v3
@@ -25,6 +21,10 @@ jobs:
           cache: gradle
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+      - name: currency.jks created
+        run: |
+            echo "${{ secrets.RELEASE_KEYSTORE }}" > currency.jks.asc
+            gpg -d --passphrase "${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}" --batch currency.jks.asc > /home/runner/work/CurrencyApp/CurrencyApp/app/currency.jks
       - name: Build with Gradle
         run: ./gradlew build
       - name: Unit Test
