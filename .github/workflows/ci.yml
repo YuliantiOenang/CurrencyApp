@@ -39,4 +39,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-          gpg --batch --passphrase "${{ secrets.RELEASE_KEYSTORE }}" -d -o currency.jks currency.jks.asc
+          echo "${{ secrets.RELEASE_KEYSTORE }}" > currency.jks.asc
