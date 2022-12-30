@@ -40,7 +40,7 @@ jobs:
       - name: Create AAB
         run: ./gradlew bundleRelease
       - name: account.json created
-          run: |
+        run: |
             echo "${{ secrets.ACCOUNT }}" > account.json.asc
             gpg -d --passphrase "${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}" --batch account.json.asc > /home/runner/work/CurrencyApp/CurrencyApp/app/account.json
       - name: Upload APK to Google Store
